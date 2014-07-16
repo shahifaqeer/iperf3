@@ -627,7 +627,7 @@ iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
                 test->json_output = 1;
                 break;
             case 'v':
-                printf("%s\n%s\n%s\n", version, get_system_info(), 
+                printf("%s\n%s\n%s\n", version, get_system_info(),
 		       get_optional_features());
                 exit(0);
             case 's':
@@ -1630,7 +1630,7 @@ protocol_new(void)
 void
 protocol_free(struct protocol *proto)
 {
-    free(proto); 
+    free(proto);
 }
 
 /**************************************************************************/
@@ -1777,7 +1777,7 @@ iperf_free_test(struct iperf_test *test)
     /* Free protocol list */
     while (!SLIST_EMPTY(&test->protocols)) {
         prot = SLIST_FIRST(&test->protocols);
-        SLIST_REMOVE_HEAD(&test->protocols, protocols);        
+        SLIST_REMOVE_HEAD(&test->protocols, protocols);
         free(prot);
     }
 
@@ -1867,7 +1867,7 @@ iperf_reset_test(struct iperf_test *test)
         free(test->congestion);
         test->congestion = NULL;
     }
-    
+
     test->ctrl_sck = -1;
     test->prot_listener = -1;
 
@@ -1879,7 +1879,7 @@ iperf_reset_test(struct iperf_test *test)
 
     FD_ZERO(&test->read_set);
     FD_ZERO(&test->write_set);
-    
+
     test->num_streams = 1;
     test->settings->socket_bufsize = 0;
     test->settings->blksize = DEFAULT_TCP_BLKSIZE;
@@ -1950,7 +1950,7 @@ iperf_stats_callback(struct iperf_test *test)
         rp = sp->result;
 
 	temp.bytes_transferred = test->sender ? rp->bytes_sent_this_interval : rp->bytes_received_this_interval;
-     
+
 	irp = TAILQ_LAST(&rp->interval_results, irlisthead);
         /* result->end_time contains timestamp of previous interval */
         if ( irp != NULL ) /* not the 1st interval */
@@ -2182,7 +2182,7 @@ iperf_print_results(struct iperf_test *test)
 	    /* Summary, UDP. */
 	    lost_percent = 100.0 * sp->cnt_error / (sp->packet_count - sp->omitted_packet_count);
 	    if (test->json_output)
-		cJSON_AddItemToObject(json_summary_stream, "udp", iperf_json_printf("socket: %d  start: %f  end: %f  seconds: %f  bytes: %d  bits_per_second: %f  jitter_ms: %f  lost_packets: %d  packets: %d  lost_percent: %f", (int64_t) sp->socket, (double) start_time, (double) end_time, (double) end_time, (int64_t) bytes_sent, bandwidth * 8, (double) sp->jitter * 1000.0, (int64_t) sp->cnt_error, (int64_t) (sp->packet_count - sp->omitted_packet_count), (double) lost_percent));
+		cJSON_AddItemToObject(json_summary_stream, "udp", iperf_json_printf("socket: %d  start: %f  end: %f  seconds: %f  bytes: %d bytes_received: %d bits_per_second: %f  jitter_ms: %f  lost_packets: %d  packets: %d  lost_percent: %f", (int64_t) sp->socket, (double) start_time, (double) end_time, (double) end_time, (int64_t) bytes_sent, (int64_t) bytes_received, bandwidth * 8, (double) sp->jitter * 1000.0, (int64_t) sp->cnt_error, (int64_t) (sp->packet_count - sp->omitted_packet_count), (double) lost_percent));
 	    else {
 		iprintf(test, report_bw_udp_format, sp->socket, start_time, end_time, ubuf, nbuf, sp->jitter * 1000.0, sp->cnt_error, (sp->packet_count - sp->omitted_packet_count), lost_percent, "");
 		if (test->role == 'c')
@@ -2276,8 +2276,8 @@ iperf_print_results(struct iperf_test *test)
 
 /**
  * Main report-printing callback.
- * Prints results either during a test (interval report only) or 
- * after the entire test has been run (last interval report plus 
+ * Prints results either during a test (interval report only) or
+ * after the entire test has been run (last interval report plus
  * overall summary).
  */
 void
@@ -2293,7 +2293,7 @@ iperf_reporter_callback(struct iperf_test *test)
             iperf_print_intermediate(test);
             iperf_print_results(test);
             break;
-    } 
+    }
 
 }
 
@@ -2344,10 +2344,10 @@ print_interval_results(struct iperf_test *test, struct iperf_stream *sp, cJSON *
     unit_snprintf(ubuf, UNIT_LEN, (double) (irp->bytes_transferred), 'A');
     bandwidth = (double) irp->bytes_transferred / (double) irp->interval_duration;
     unit_snprintf(nbuf, UNIT_LEN, bandwidth, test->settings->unit_format);
-    
+
     st = timeval_diff(&sp->result->start_time, &irp->interval_start_time);
     et = timeval_diff(&sp->result->start_time, &irp->interval_end_time);
-    
+
     if (test->protocol->id == Ptcp || test->protocol->id == Psctp) {
 	if (test->sender && test->sender_has_retransmits) {
 	    /* Interval, TCP with retransmits. */
@@ -2431,7 +2431,7 @@ iperf_new_stream(struct iperf_test *test, int s)
 
     memset(sp->result, 0, sizeof(struct iperf_stream_result));
     TAILQ_INIT(&sp->result->interval_results);
-    
+
     /* Create and randomize the buffer */
     sp->buffer_fd = mkstemp(template);
     if (sp->buffer_fd == -1) {
